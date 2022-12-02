@@ -38,6 +38,13 @@ class Layout:
         # draw text to the bottom right corner to tell the user to press enter to start the game
         instructions = font.render("Press ENTER when you are done placing bets.", True, (255, 255, 255))
         screen.blit(instructions, (1050 - instructions.get_width(), 600 - instructions.get_height()))
+        # tell the user that they may only place 2 bets
+        if self.numberOfBets >= 2:
+            instructions = font.render("You have reached the maximum of 2 bets", True, red)
+        else:
+            instructions = font.render("There is a maximum of 2 bets.", True, (255, 255, 255))
+        # place it in the center of the screen at y=100
+        screen.blit(instructions, (550 - instructions.get_width()/2, 60))
     def placebet(self, x, y):
         # if you have 2 bets, you can't place more bets
         if self.numberOfBets >= 2:
