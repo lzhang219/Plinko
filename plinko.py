@@ -7,7 +7,6 @@ from objects import *
 # Import the pygame library and initialise the game engine
 import pygame
 import random
-pygame.init()
 # import necessary pygame submodules
 from pygame.locals import *
 import pygame.time
@@ -30,6 +29,7 @@ class Board:
         slots = SlotLayer(500, 11, 8, self)
         self.peglayers.append(slots)
         self.slots = slots
+        self.dropped = False
         # there are 2 reflectors on the bottom of the board
         # the reflector on the left forces the ball to go right
         # the reflector on the right forces the ball to go left
@@ -43,10 +43,14 @@ class Board:
 
     def draw(self):
         # board is green
-        screen.fill((0, 255, 0))
+        screen.fill((0, 127, 0))
         for layer in self.peglayers:
             layer.draw()
         self.ball.draw()
+        if not self.dropped:
+            font = pygame.font.SysFont("Arial", 30)
+            text = font.render("Press space to drop the ball", True, (255, 255, 255))
+            screen.blit(text, (15, 30))
         # highlight the selected peg
         pygame.draw.circle(screen, (255, 0, 0), (self.selectedpeg.x, self.selectedpeg.y), self.selectedpeg.radius)
     # define a function for the user to change the selected peg
@@ -99,20 +103,23 @@ class Board:
     
     # drop the ball from the peg it is above and allow it to fall to a peg in the layer below or a slot if it is in the bottom layer
 
-
     # drop the ball
     def dropball(self):
+        self.dropped = True
         # keep track of what the ball is above
         above = self.selectedpeg
+        self.moveball(above)
         # loop until the ball reaches a slot
+        tickselapsed = 0
         while True:
+            tickselapsed += 1
             # event loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
             # every 15 ticks, move the ball
-            if pygame.time.get_ticks() % 15 == 0:
+            if tickselapsed % 30 == 0:
                 # check if the ball is on a peg
                 if above.type == "peg":
                     # get the layer of the peg
@@ -135,65 +142,65 @@ class Board:
                 # check if the ball is on a slot
                 elif above.type == "slot":
                     # end the loop
-                    break
+                    self.dropped = False
+                    return above.index
                 # check if the ball is on a reflector
                 elif above.type == "reflector":
-                    pass
-                    # # get the layer of the reflector
-                    # layer = above.lIndex
-                    # # get the index of the reflector
-                    # index = above.index
-                    # # get the new index
-                    # if above.direction == 1:
-                    #     newindex = index + 1
-                    # else:
-                    #     newindex = index
-                    # # get the new peg
-                    # newpeg = self.peglayers[layer + 1].pegs[newindex]
-                    # # put the ball above the new peg
-                    # above = newpeg
-                    # self.moveball(newpeg)
+                    # get the layer of the reflector
+                    layer = above.lIndex
+                    # get the index of the reflector
+                    index = above.index
+                    # get the new index
+                    if above.direction == 1:
+                        newindex = index + 1
+                    else:
+                        newindex = index
+                    # get the new peg
+                    newpeg = self.peglayers[layer + 1].pegs[newindex]
+                    # put the ball above the new peg
+                    above = newpeg
+                    self.moveball(newpeg)
             # draw the updated parts of the screen
             self.draw()
             # update the screen
             pygame.display.update()
             # set the frame rate
             clock.tick(60)
-            print(clock.get_fps())
             
-            
-    
-# main program
-# create a board
-board = Board()
 clock = pygame.time.Clock()
-# create a clock
-running = True
-while running:
-    # check for events
-    for event in pygame.event.get():
-        # if the user clicks the close button, stop the game
-        if event.type == pygame.QUIT:
-            running = False
-        # if the user presses a key
-        if event.type == pygame.KEYDOWN:
-            # if the user presses the left arrow key, select the peg to the left
-            if event.key == pygame.K_LEFT:
-                board.selectpeg(-1)
-            # if the user presses the right arrow key, select the peg to the right
-            if event.key == pygame.K_RIGHT:
-                board.selectpeg(1)
-            # if the user presses the space bar, move the ball above the selected peg
-            if event.key == pygame.K_SPACE:
-                board.dropball()
-            # if the user presses the return key, drop the ball
-            if event.key == pygame.K_RETURN:
-                board.dropball()
-    # draw the board
-    board.draw()
-    # update the display
-    pygame.display.update()
-    # set the background color
-    screen.fill((0, 0, 0))
-    # set the frame rate
-    clock.tick(60)
+# terrible code smh, who wrote this? oh wait, that's me.
+if __name__ == "__main__":   
+    # main program
+    # create a board
+    pygame.init()
+    board = Board()
+    # create a clock
+    running = True
+    while running:
+        # check for events
+        for event in pygame.event.get():
+            # if the user clicks the close button, stop the game
+            if event.type == pygame.QUIT:
+                running = False
+            # if the user presses a key
+            if event.type == pygame.KEYDOWN:
+                # if the user presses the left arrow key, select the peg to the left
+                if event.key == pygame.K_LEFT:
+                    board.selectpeg(-1)
+                # if the user presses the right arrow key, select the peg to the right
+                if event.key == pygame.K_RIGHT:
+                    board.selectpeg(1)
+                # if the user presses the space bar, move the ball above the selected peg
+                if event.key == pygame.K_SPACE:
+                    board.dropball()
+                # if the user presses the return key, drop the ball
+                if event.key == pygame.K_RETURN:
+                    board.dropball()
+        # draw the board
+        board.draw()
+        # update the display
+        pygame.display.update()
+        # set the background color
+        screen.fill((0, 0, 0))
+        # set the frame rate
+        # clock.tick(60)

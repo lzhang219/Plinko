@@ -39,7 +39,6 @@ class SlotLayer (PegLayer):
         # The slots alternate between black and red in color except for the middle slot which is always white
         # the slots are centered on the screen
         # the slots are 100 pixels wide and 100 pixels high
-        slotsinfo = [("",green),("1", black), ("2", red), ("3", black), ("4", red), ("0", white), ("5", red), ("6", black), ("7", red), ("8", black), ("", green)]
         slots = []
         for i in range(11):
             x = 500 - (11 - 1) * 50 + i * 100
