@@ -4,4 +4,5 @@ the first layer has 3 pegs, and the number of pegs increase by 1 each layer in a
 
 This is a probability based game for MDM4U
 
+Nothing but a bunch of copied code and poorly written code xd.
 **TODO: ADD ANIMATIONS FOR THE BALL DROPPING**
