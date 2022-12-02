@@ -1,5 +1,5 @@
-import csv
 import pygame
+import uuid
 from constants import *
 import os
 import json
@@ -8,32 +8,20 @@ class Scoreboard:
     def __init__(self):
         self.scores = []
         self.load()
+        self.currentUserRank = 0
     # I LOVE COPYING CODE!
     def load(self):
-        # load the scores from the file saved in the same directory as the program in format:
-        # name, score (separated by a comma)
-        if os.path.isfile("scores.csv"):            
-            with open("scores.csv", "r") as f:
-                reader = csv.reader(f)
-                for row in reader:
-                    # prevent empty lines
-                    if len(row) > 0:
-                        self.scores.append(row)
-        print(json.dumps(self.scores, indent=4))
+        # load the scores from the scores file
+        # check if the file exists
+        if os.path.exists("scores.json"):  
+            with open("scores.json", "r") as f:
+                self.scores = json.load(f)
     def save(self):
         # sort the scores
         self.sort()
-        # overwrite the scores file with the new saved scores in the format
-        # name, score (separated by a comma)
-        # without empty lines
-        # don't save more than 20 scores
-        with open("scores.csv", "w") as f:
-            writer = csv.writer(f)
-            for i in range(20):
-                # prevent array out of bounds
-                if i >= len(self.scores):
-                    break
-                writer.writerow(self.scores[i])
+        # save the scores to the scores file
+        with open("scores.json", "w") as f:
+            json.dump(self.scores, f)
     def add(self, score):
         # add a score to the list by accepting a name via the keyboard by prompting the user to enter a name using pygame
         screen = pygame.display.get_surface()
@@ -72,12 +60,22 @@ class Scoreboard:
                     else:
                         name += event.unicode
             pygame.display.update()
-        self.scores.append([name, score])
+        # generate a unique id for the score
+        id = len(self.scores)
+        self.scores.append((id, name, score))
         self.save()
+        # find the rank of the current user
+        self.currentUserRank = 0
+        for i in range(len(self.scores)):
+            if self.scores[i][0] == id:
+                self.currentUserRank = i + 1
+                break
+        
+
     def sort(self):
         # sort the scores if there are more than 1
         if len(self.scores) > 1:
-            self.scores.sort(key=lambda x: int(x[1]), reverse=True)
+            self.scores.sort(key=lambda x: int(x[2]), reverse=True)
     def draw(self):
         # sort the scores
         self.sort()
@@ -94,11 +92,16 @@ class Scoreboard:
             # prevent array out of bounds
             if i >= len(self.scores):
                 break
-            text = font.render(self.scores[i][0], True, white)
+            text = font.render(self.scores[i][1], True, white)
             screen.blit(text, (50, 50 + i * 50))
-            text = font.render(str(self.scores[i][1]), True, white)
+            text = font.render(str(self.scores[i][2]), True, white)
             screen.blit(text, (1000 - text.get_width(), 50 + i * 50))
         pygame.display.update()
+        # draw the current user's rank in the bottom right corner, right aligned
+        if self.currentUserRank != 0:
+            text = font.render("Your rank: " + str(self.currentUserRank), True, white)
+            screen.blit(text, (1000 - text.get_width(), 600 - text.get_height()))
+            pygame.display.update()
     
 # main for testing
 if __name__ == "__main__":
