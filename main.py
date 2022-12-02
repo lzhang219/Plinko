@@ -1,4 +1,5 @@
 # Import pygame, plinko, betting, objects and constants
+import os
 import pygame
 import plinko
 import betting
@@ -31,7 +32,7 @@ state = 0
 # loop
 layout.score = 3
 font = pygame.font.SysFont("Arial", 20)
-outcomes = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}
+outcomes = {"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0}
 while True:
     if state == 0:
         for event in pygame.event.get():
@@ -65,7 +66,13 @@ while True:
                 # if the user presses the space bar, move the ball above the selected peg
                 if event.key == pygame.K_SPACE:
                     result = slotsinfo[board.dropball()]
-                    outcomes[int(result[0])] += 1
+                    # load the json file outcomes
+                    # check if outcomes.json exists
+                    if os.path.exists("outcomes.json"):
+                        with open("outcomes.json", "r") as f:
+                            outcomes = json.load(f)
+                    # add the result to the outcomes
+                    outcomes[result[0]] += 1
                     with open("outcomes.json", "w") as f:
                         json.dump(outcomes, f)
                     layout.result(result[1], int(result[0]))

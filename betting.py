@@ -6,6 +6,8 @@
 from constants import *
 from objects import *
 import sys
+import pygame
+
 class Layout:
     def __init__(self):
         self.score = 3
@@ -181,12 +183,6 @@ class ColourBet:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
                             return
-        
-        
-        
-
-
-
 
 
 
