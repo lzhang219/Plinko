@@ -9,6 +9,7 @@ import sys
 class Layout:
     def __init__(self):
         self.score = 3
+        self.numberOfBets = 0
         self.colourbets = []
         self.numberbets = []
         for index, colour in enumerate(colours.items()):
@@ -38,6 +39,9 @@ class Layout:
         instructions = font.render("Press ENTER when you are done placing bets.", True, (255, 255, 255))
         screen.blit(instructions, (1050 - instructions.get_width(), 600 - instructions.get_height()))
     def placebet(self, x, y):
+        # if you have 2 bets, you can't place more bets
+        if self.numberOfBets >= 2:
+            return
         # check if the user clicked on a colour bet
         for bet in self.colourbets:
             if bet.x <= x <= bet.x + bet.width and bet.y <= y <= bet.y + bet.height:
@@ -50,6 +54,7 @@ class Layout:
                 return
         return
     def result(self, colour, number):
+        self.numberOfBets = 0
         # check if the user won any colour bets
         for bet in self.colourbets:
             if bet.colour == colour:
@@ -145,6 +150,8 @@ class ColourBet:
         # if they can't, tell them they can't afford the bet
         # if they can, add the bet to the bet variable
         if layout.score >= bet:
+            if bet > 0:
+                layout.numberOfBets += 1
             layout.score -= bet
             self.bet = bet
             return
@@ -255,6 +262,8 @@ class NumberBet:
         # if they can't, tell them they can't afford the bet
         # if they can, add the bet to the bet variable
         if layout.score >= bet:
+            if bet > 0:
+                layout.numberOfBets += 1
             layout.score -= bet
             self.bet = bet
             return
