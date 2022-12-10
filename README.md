@@ -6,3 +6,11 @@ This is a probability based game for MDM4U
 
 Nothing but a bunch of copied code and poorly written code xd.
 **TODO: ADD ANIMATIONS FOR THE BALL DROPPING**
+
+## Running
+Install python, clone the repository
+```
+pip -r requirements.txt
+python main.py
+```
+Alternatively download the executable for Windows [here](https://github.com/lzhang219/Plinko/releases/tag/v1).
